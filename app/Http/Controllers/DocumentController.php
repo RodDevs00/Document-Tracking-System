@@ -119,10 +119,18 @@ class DocumentController extends Controller
     public function received()
     {
         $documentTrackings = DocumentTracking::where('office_division', auth()->user()->office_division)
-        ->where('status', 'Approved')
+        ->where('status', 'received')
         ->with('user','documentDetail')
         ->get();
         return view('document.received',compact('documentTrackings'));
+    }
+    public function approved()
+    {
+        $documentTrackings = DocumentTracking::where('office_division', auth()->user()->office_division)
+        ->where('status', 'Approved')
+        ->with('user','documentDetail')
+        ->get();
+        return view('document.approved',compact('documentTrackings'));
     }
 
     public function incoming()
@@ -366,6 +374,7 @@ class DocumentController extends Controller
                     DocumentTrace::create([
                         'user_id' => auth()->user()->id,
                         'document_detail_id' => $documentTracking->id,
+                        'status' => $request->status,
                     ]);
 
                     ReceivedHistory::create([
@@ -379,6 +388,12 @@ class DocumentController extends Controller
                     $documentTracking->status = $request->status;
                     $documentTracking->note = $request->note;
                     $documentTracking->save();
+
+                    DocumentTrace::create([
+                        'user_id' => auth()->user()->id,
+                        'document_detail_id' => $documentTracking->id,
+                        'status' => $request->status,
+                    ]);
                 }
                 elseif($request->status === "Transaction successful"){
                     $documentTracking =  DocumentTracking::FindOrFail($id);

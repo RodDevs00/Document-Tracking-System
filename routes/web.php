@@ -38,6 +38,7 @@ Route::post('document/register', [DocumentController::class, 'registerUser'])->n
 Route::post('document', [DocumentController::class, 'store'])->name('document.store');
 Route::get('document/received', [DocumentController::class, 'received'])->name('document.received');
 Route::get('document/incoming', [DocumentController::class, 'incoming'])->name('document.incoming');
+Route::get('document/approved', [DocumentController::class, 'approved'])->name('document.approved');
 Route::get('document/rejected', [DocumentController::class, 'rejected'])->name('document.rejected');
 Route::get('document/outgoing', [DocumentController::class, 'outgoing'])->name('document.outgoing');
 Route::get('document/received/history', [DocumentController::class, 'receivedHistory'])->name('document.receivedHistory');

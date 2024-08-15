@@ -5,7 +5,7 @@ use App\Models\Outgoing;
 function receivedTotal()
 {
     $total = DocumentTracking::where('office_division', auth()->user()->office_division)
-    ->where('status', 'Approved')
+    ->where('status', 'received')
     ->get()
     ->count();
 
@@ -16,6 +16,15 @@ function rejectedTotal()
 {
     $total = DocumentTracking::where('office_division', auth()->user()->office_division)
     ->where('status', 'Disapproved')
+    ->get()
+    ->count();
+    return $total;
+}
+
+function approvedTotal()
+{
+    $total = DocumentTracking::where('office_division', auth()->user()->office_division)
+    ->where('status', 'Approved')
     ->get()
     ->count();
     return $total;

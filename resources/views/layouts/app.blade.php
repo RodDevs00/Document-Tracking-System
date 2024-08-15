@@ -187,6 +187,12 @@
                                     <span>OUTGOING</span>
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ route('document.approved') }}" class=" waves-effect"><span class="badge bg-danger float-end">{{ approvedTotal() }}</span>
+                                    <i class="ri-calendar-2-line"></i>
+                                    <span>APPROVED</span>
+                                </a>
+                            </li>
 
                             <li>
                                 <a href="{{ route('document.rejected') }}" class=" waves-effect"><span class="badge bg-danger float-end">{{ rejectedTotal() }}</span>
