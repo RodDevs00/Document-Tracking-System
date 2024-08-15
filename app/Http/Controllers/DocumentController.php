@@ -358,6 +358,8 @@ class DocumentController extends Controller
                     $documentTracking->status = $request->status;
                     $documentTracking->office_division = $request->office_division;
                     $documentTracking->save();
+
+                   
         
                     Outgoing::create([
                         'document_detail_id' => $documentTracking->id,
@@ -401,6 +403,12 @@ class DocumentController extends Controller
                     $documentTracking->status = $request->status;
                     $documentTracking->note = $request->note;
                     $documentTracking->save();
+
+                    DocumentTrace::create([
+                        'user_id' => auth()->user()->id,
+                        'document_detail_id' => $documentTracking->id,
+                        'status' => $request->status,
+                    ]);
                 }
             });
         } catch (\Exception $e){
