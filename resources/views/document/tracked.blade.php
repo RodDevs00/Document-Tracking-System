@@ -67,7 +67,7 @@
                             Origin: <b>{{ $documentDetail->origin }}</b>
                             <br>
                             Subject: <b>{{ $documentDetail->subject }}</b>
-                            <p>Note: <b>{{ $documentTracking->note }}</b></p>
+                            
                         </div>
                         <section id="cd-timeline" class="cd-container">
                             @foreach ($documentTraces as $documentTrace)
@@ -77,9 +77,15 @@
                                     </div> <!-- cd-timeline-img -->
                                 
                                     <div class="cd-timeline-content">
-                                        <h3>{{ strtoupper($documentTrace->status) }}</h3>
-                                        <p class="mb-0 text-muted font-14">at {{ strtoupper($documentTrace->user->office_division)  }}</p>
-                                        <p class="mb-0 text-muted font-14">by  {{ Str::ucfirst($documentTrace->user->first_name) }} {{ strtoupper(substr($documentTrace->user->middle_name,0,1)) }}. {{ ucfirst($documentTrace->user->last_name) }}  </p>
+                                    <h3>{{ strtoupper($documentTrace->status) }}</h3>
+                                            <p class="mb-0 text-muted font-14"><strong> at: </strong> {{ strtoupper($documentTrace->user->office_division) }}</p>
+                                            
+                                            @if ($documentTrace->status === 'incoming')
+                                                <p class="mb-0 text-muted font-14"><strong> to: </strong> {{ strtoupper($documentTrace->documentTracking->office_division ?? 'N/A') }}</p>
+                                            @else
+                                                <p class="mb-0 text-muted font-14"><strong> by: </strong> {{ Str::ucfirst($documentTrace->user->first_name) }} {{ strtoupper(substr($documentTrace->user->middle_name, 0, 1)) }}. {{ ucfirst($documentTrace->user->last_name) }}</p>
+                                                <p class="mb-0 text-muted font-14"><strong> Feedback/Comment: </strong> {{ Str::ucfirst($documentTrace->note) }}</p>
+                                            @endif
                                         <span class="cd-date">{{ $documentTrace->created_at }}</span>
                                     </div> <!-- cd-timeline-content -->
                                 </div> <!-- cd-timeline-block -->
@@ -87,38 +93,7 @@
                         
                         @endif
 
-                        @if (isset($documentTracking))
-                            @if ($documentTracking->status == "Disapproved")
-                                <div class="cd-timeline-block">
-                                    <div class="cd-timeline-img cd-danger">
-                                        <i class="mdi mdi-adjust"></i>
-                                    </div> <!-- cd-timeline-img -->
-
-                                    <div class="cd-timeline-content">
-                                        <h3>{{ strtoupper($documentTracking->status) }}</h3>
-                                        <p class="m-b-20 text-muted font-14">at {{ strtoupper($documentTracking->user->office_division)  }}</p>
-                                        <p class="mb-0 text-muted font-14">by  {{ Str::ucfirst($documentTracking->user->first_name) }} {{ strtoupper(substr($documentTracking->user->middle_name,0,1)) }}. {{ ucfirst($documentTracking->user->last_name) }}  </p>
-                                        {{-- <button type="button" class="btn btn-primary btn-rounded waves-effect waves-light m-t-5">See more detail</button> --}}
-                                        <span class="cd-date">{{ $documentTracking->updated_at }}</span>
-                                    </div> <!-- cd-timeline-content --> 
-                                </div> <!-- cd-timeline-block -->
-                            
-                            @elseif ($documentTracking->status == "incoming")
-                                <div class="cd-timeline-block">
-                                    <div class="cd-timeline-img cd-danger">
-                                        <i class="mdi mdi-adjust"></i>
-                                    </div> <!-- cd-timeline-img -->
-
-                                    <div class="cd-timeline-content">
-                                        <h3>{{ strtoupper($documentTracking->status) }}</h3>
-                                        <p class="m-b-20 text-muted font-14">to {{ strtoupper($documentTracking->office_division)  }}</p>
-                                        {{-- <button type="button" class="btn btn-primary btn-rounded waves-effect waves-light m-t-5">See more detail</button> --}}
-                                        <span class="cd-date">{{ $documentTracking->updated_at }}</span>
-                                    </div> <!-- cd-timeline-content --> 
-                                </div> <!-- cd-timeline-block -->
-                            
-                            @endif 
-                        @endif
+                     
                     </section> <!-- cd-timeline -->
                 </div>
             </div>

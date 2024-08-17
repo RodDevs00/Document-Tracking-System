@@ -120,6 +120,10 @@
                                                             <label class="form-label">Subject</label>
                                                             <textarea name="subject" id="" cols="30" rows="5" class="form-control" required></textarea>
                                                         </div>
+                                                        <div class="mb-4">
+                                                                    <label class="form-label">Note</label>
+                                                                    <textarea name="note" id="" cols="30" rows="5" class="form-control"  required> </textarea>
+                                                                    </div>
                                                     </div>
                                                     </div>
                                                     <div class="modal-footer">

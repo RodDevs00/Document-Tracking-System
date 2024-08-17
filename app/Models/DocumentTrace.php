@@ -13,6 +13,7 @@ class DocumentTrace extends Model
         'user_id',
         'document_detail_id',
         'status',
+        'note',
     ];
 
     public function user(){
@@ -22,4 +23,10 @@ class DocumentTrace extends Model
     public function documentDetail(){
         return $this->belongsTo(DocumentDetail::class);
     }
+
+    public function documentTracking()
+    {
+        return $this->belongsTo(DocumentTracking::class, 'document_detail_id', 'document_detail_id');
+    }
+
 }

@@ -102,7 +102,11 @@
                                                                         <textarea name="" id="" cols="30" rows="5" class="form-control"  required readonly>{{ $documentTracking->documentDetail->subject }}</textarea>
                                                                     </div>
                                                                     <div class="mb-4">
-                                                                        <input type="text" value="Approved" name="status" class="form-control" hidden>
+                                                                    <label class="form-label">Note</label>
+                                                                    <textarea name="note" id="" cols="30" rows="5" class="form-control"  required> </textarea>
+                                                                    </div>
+                                                                    <div class="mb-4">
+                                                                        <input type="text" value="received" name="status" class="form-control" hidden>
                                                                     </div>
                                                                 </div>
                                                                 </div>

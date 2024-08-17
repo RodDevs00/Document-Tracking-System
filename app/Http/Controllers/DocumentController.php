@@ -23,41 +23,43 @@ class DocumentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    function find(Request $request){
-    //     $request->validate([
-    //       'query'=>'required|min:2'
-    //    ]);
-
-
-        // dd($request->input('query'));
-
-      try {
+    public function find(Request $request)
+    {
+        try {
             $search_text = $request->input('query');
-
-            $documentDetail = DocumentDetail::where('document_code',$search_text)->first();
-
-            if($documentDetail){
-                $documentTraces = DocumentTrace::where('document_detail_id',$documentDetail->id)->with('user','documentDetail')->get();
-                $documentLatest = DocumentTrace::where('document_detail_id',$documentDetail->id)->with('user','documentDetail')->latest()->first();
-                $data = $documentLatest->user->office_division; 
-                // throw new Exception('Something went wrong');
-                $documentTracking = DocumentTracking::where('document_detail_id',$documentDetail->id)->with('user','documentDetail')->first();
-                if($data == $documentTracking->office_division && $documentTracking->status == "incoming"){
-                    $documentTracking =null;
+    
+            $documentDetail = DocumentDetail::where('document_code', $search_text)->first();
+    
+            if ($documentDetail) {
+                $documentTraces = DocumentTrace::where('document_detail_id', $documentDetail->id)
+                    ->with(['user', 'documentDetail', 'documentTracking']) // Ensure documentTracking relationship is loaded
+                    ->get();
+                $documentLatest = DocumentTrace::where('document_detail_id', $documentDetail->id)
+                    ->with(['user', 'documentDetail'])
+                    ->latest()
+                    ->first();
+                $data = $documentLatest->user->office_division;
+    
+                $documentTracking = DocumentTracking::where('document_detail_id', $documentDetail->id)
+                    ->with(['user', 'documentDetail'])
+                    ->first();
+    
+                if ($data == $documentTracking->office_division && $documentTracking->status == "incoming") {
+                    $documentTracking = null;
                 }
-
-            }else {
-                Alert::error('oppss', 'No record found...');
+    
+            } else {
+                Alert::error('Oops', 'No record found...');
                 return view('document.tracked');
             }
-      } catch (\Exception $e) {
+        } catch (\Exception $e) {
             Alert::error('Something went wrong', 'Please try again...');
             return view('document.tracked');
-      }
-
-
-       return view('document.tracked',compact('documentTraces','documentTracking','documentDetail'));
+        }
+    
+        return view('document.tracked', compact('documentTraces', 'documentTracking', 'documentDetail'));
     }
+    
 
     function find2(Request $request){
         //     $request->validate([
@@ -283,6 +285,8 @@ class DocumentController extends Controller
                 DocumentTrace::create([
                     'user_id' => auth()->user()->id,
                     'document_detail_id' => $documentDetail->id,
+                    'note' => $request->note,
+
                 ]);
 
                 ReceivedHistory::create([
@@ -359,8 +363,20 @@ class DocumentController extends Controller
                     $documentTracking->office_division = $request->office_division;
                     $documentTracking->save();
 
-                   
-        
+                    DocumentTrace::create([
+                        'user_id' => auth()->user()->id,
+                        'document_detail_id' => $documentTracking->id,
+                        'status' => "Approved",
+                        'note' => $request->note,
+                    ]);
+
+                    DocumentTrace::create([
+                        'user_id' => auth()->user()->id,
+                        'document_detail_id' => $documentTracking->id,
+                        'status' => $request->status,
+                        // 'note' => $request->note,
+                    ]);
+      
                     Outgoing::create([
                         'document_detail_id' => $documentTracking->id,
                         'user_id' => auth()->user()->id,
@@ -368,6 +384,24 @@ class DocumentController extends Controller
                     ]);
         
                         // throw new \Exception("This is a manually thrown exception.");
+                }elseif($request->status === "received"){
+                    $documentTracking =  DocumentTracking::FindOrFail($id);
+                    $documentTracking->status = $request->status;
+                    $documentTracking->save();
+
+                    DocumentTrace::create([
+                        'user_id' => auth()->user()->id,
+                        'document_detail_id' => $documentTracking->id,
+                        'status' => $request->status,
+                        'note' => $request->note,
+
+                    ]);
+
+                    ReceivedHistory::create([
+                        'user_id' => auth()->user()->id,
+                        'document_detail_id' => $documentTracking->id,
+                    ]);
+                    
                 }elseif($request->status === "Approved"){
                     $documentTracking =  DocumentTracking::FindOrFail($id);
                     $documentTracking->status = $request->status;
@@ -377,6 +411,8 @@ class DocumentController extends Controller
                         'user_id' => auth()->user()->id,
                         'document_detail_id' => $documentTracking->id,
                         'status' => $request->status,
+                        'note' => $request->note,
+
                     ]);
 
                     ReceivedHistory::create([
@@ -388,26 +424,26 @@ class DocumentController extends Controller
                     $documentTracking =  DocumentTracking::FindOrFail($id);
                     $documentTracking->user_id = auth()->user()->id;
                     $documentTracking->status = $request->status;
-                    $documentTracking->note = $request->note;
                     $documentTracking->save();
 
                     DocumentTrace::create([
                         'user_id' => auth()->user()->id,
                         'document_detail_id' => $documentTracking->id,
                         'status' => $request->status,
+                        'note' => $request->note,
                     ]);
                 }
                 elseif($request->status === "Transaction successful"){
                     $documentTracking =  DocumentTracking::FindOrFail($id);
                     $documentTracking->user_id = auth()->user()->id;
                     $documentTracking->status = $request->status;
-                    $documentTracking->note = $request->note;
                     $documentTracking->save();
 
                     DocumentTrace::create([
                         'user_id' => auth()->user()->id,
                         'document_detail_id' => $documentTracking->id,
                         'status' => $request->status,
+                        'note' => $request->note,
                     ]);
                 }
             });
