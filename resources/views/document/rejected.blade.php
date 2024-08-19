@@ -116,9 +116,17 @@
                                                                        <textarea name="" id="" cols="30" rows="5" class="form-control"  required readonly>{{ $documentTracking->documentDetail->subject }}</textarea>
                                                                    </div>
                                                                    <div class="mb-4">
-                                                                        <input type="text" value="incoming" name="status" class="form-control" hidden>
-                                                                   </div>
+                                                                    <label class="form-label"><b>STATUS: </b></label>
+                                                                    <select name="status" class="form-control" required="true" id="primary-select"> 
+                                                                            <option value="incoming">Release</option>
+                                                                            <option value="Transaction successful">Transaction successful</option>
+                                                                    </select>
+                                                                </div>
                                                                    <div class="mb-4">
+                                                                    <label class="form-label">Note</label>
+                                                                    <textarea name="note" id="" cols="30" rows="5" class="form-control"  required> </textarea>
+                                                                </div>
+                                                                   <div class="mb-4" id="secondary-select-container">
                                                                        <label class="form-label"><b>TO: </b></label>
                                                                        <select name="office_division" class="form-control">
                                                                            <option value="" selected="true" disabled>Select...</option>
@@ -168,7 +176,7 @@
                                                                </div>
                                                                <div class="modal-footer">
                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                   <button type="submit" class="btn btn-success">Release</button>
+                                                                   <button type="submit" class="btn btn-success">Confirm</button>
                                                                </div>
                                                         </form>
                                                     </div>
@@ -186,24 +194,22 @@
 
 </div>
 <script>
-    $(document).ready(function() {
-     // Disable and hide the hidden select when the page loads
-     $('#hiddenSelectGroup').hide();
-     $('#hiddenSelect').prop('disabled', true);
 
-     // Show/hide and enable/disable the hidden select based on the selected value of enableDisableSelect
-     $('#enableDisableSelect').change(function() {
-       var selectedValue = $(this).val();
-       
-       if (selectedValue === 'incoming') {
-         $('#hiddenSelectGroup').show();
-         $('#hiddenSelect').prop('disabled', false);
-       } else if (selectedValue === 'rejected') {
-         $('#hiddenSelectGroup').hide();
-         $('#hiddenSelect').prop('disabled', true);
-       }
-     });
-   });
-
+$(document).ready(function() {
+  // Event listener for changes in the primary select inside any modal with class 'modal'
+  $(document).on('change', '.modal #primary-select', function() {
+    var selectedValue = $(this).val();
+    var secondarySelectContainer = $(this).closest('.modal').find('#secondary-select-container');
+    var mySelect2 = $(this).closest('.modal').find('#mySelect');
+    if (selectedValue === "Transaction successful") {
+      secondarySelectContainer.hide();
+      mySelect2.prop('disabled', true);
+    } else if (selectedValue === "incoming") {
+      secondarySelectContainer.show();
+      mySelect2.prop('disabled', false);
+    }
+  });
+});
 </script>
+
 @endsection

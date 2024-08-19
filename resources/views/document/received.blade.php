@@ -274,7 +274,7 @@ $(document).ready(function() {
     var selectedValue = $(this).val();
     var secondarySelectContainer = $(this).closest('.modal').find('#secondary-select-container');
     var mySelect2 = $(this).closest('.modal').find('#mySelect');
-    if (selectedValue === "rejected") {
+    if (selectedValue === "Disapproved" || selectedValue === "Transaction successful") {
       secondarySelectContainer.hide();
       mySelect2.prop('disabled', true);
     } else if (selectedValue === "incoming") {
