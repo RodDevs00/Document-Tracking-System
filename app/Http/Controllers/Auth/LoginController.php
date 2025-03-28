@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 
@@ -60,11 +61,13 @@ class LoginController extends Controller
 
             $user = User::where('email', $input['email'])->first();
 
-            if ($user && $user->password === $input['password']) {
-                // Authentication successful, redirect the user.
+       
+
+            if ($user && Hash::check($input['password'], $user->password)) {
                 Auth::login($user);
                 return redirect()->route('document.incoming');
             }
+            
 
             return redirect()->route('login')->with('error','input proper email or password.');
     }
